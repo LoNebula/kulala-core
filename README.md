@@ -1,101 +1,21 @@
-> Personal recovery fork maintained by andycowan. See [RECOVERY.md](RECOVERY.md) for provenance, supported platforms and limitations.
+# kulala-core (LoNebula rebuild mirror)
 
-<div align="center">
+Rebuilt binaries of [kulala-core](https://github.com/andycowan/kulala-core) — the recovery fork of the original `mistweaverco/kulala-core` (which went private on 2026-09-27).
 
-![Kulala Logo](assets/logo.svg)
+- **Source**: andycowan/kulala-core (recovery fork, MIT — see LICENSE)
+- **Version**: `0.37.0-andycowan.1` (release tag: `v0.37.0-andycowan.1`, must match `kulala.nvim`'s `BACKEND_VERSION`)
+- **Built with**: `bun run build:<target>` for all 5 targets (linux-x64/arm64, darwin-x64/arm64, windows-x64) on Ubuntu 26.04 / bun 1.4.0
 
-# Kulala Core
+## Rebuild
 
-[![Made with love](assets/badge-made-with-love.svg)](https://github.com/mistweaverco/kulala-core/graphs/contributors)
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/mistweaverco/kulala-core?style=for-the-badge)](https://github.com/mistweaverco/kulala-core/releases/latest)
-[![Development status)](assets/badge-development-status.svg)](https://github.com/orgs/mistweaverco/projects/3/views/1?filterQuery=repo%3Amistweaverco%2Fkulala-core)
-[![Discord](assets/badge-discord.svg)](https://mistweaverco.com/discord)
+```sh
+git clone https://github.com/andycowan/kulala-core && cd kulala-core
+bun install
+for t in linux-x64 linux-arm64 darwin-x64 darwin-arm64 windows-x64; do
+  bun run build:$t
+done
+gh release create v0.37.0-andycowan.1 packages/core/dist/kulala-core-* \
+  --title "kulala-core 0.37.0-andycowan.1 (all platforms)"
+```
 
-<p></p>
-
-Kulala is swahili for "rest" or "relax."
-
-API bridge that powers the
-[Kulala toolchain](https://kulala.app) and can be used as a standalone library.
-
-<p></p>
-
-</div>
-
-## Overview
-
-A RESTful API is a web service architecture that adheres to
-specific constraints:
-
-- statelessness,
-- uniform interface,
-- client-server separation
-
-Typically using HTTP methods like `GET`, `POST`, `PUT`, and `DELETE`.
-It uses standard web protocols to enable interoperability
-between distributed systems.
-
-## Features
-
-### Request types
-
-- HTTP RESTful (1.0, 1.1, 2, 3)
-- GraphQL (queries, mutations)
-- OpenAPI (spec load, explorer UI tree, Try it out overrides, LSP completions, `$ref` bundling, Swagger 2.0)
-- gRPC
-- WebSockets
-
-### Variables
-
-- Host Environment
-- Document variables
-- Request scoped variables
-- `http-client.env` files
-- Built-in support for [withsecrets](https://withsecrets.com) (`ws`; legacy `kuba` alias still works)
-
-### Scripting
-
-Supports JavaScript, Lua, and TypeScript for:
-
-- Pre-request
-- Post-request
-- Conditional
-- Inline
-- External
-
-### Authentication
-
-- Basic
-- Bearer
-- OAuth 2.0
-
-### Automation and testing
-
-Assertions, automated testing and reporting
-is compatible with the IntelliJ HTTP Client:
-
-## Usage
-
-### Example .http files
-
-See the [http-example-files][http-example-files]
-directory for example .http files.
-
-### Example integrations
-
-See the [examples][examples]
-directory for integration examples.
-
-### curl binary
-
-Resolution order: `KULALA_CURL_PATH` (if set),
-then a pinned copy under the user cache (for example on Linux: `~/.local/share/kulala-core/cache/curl/<platform>-<arch>/curl`),
-then **curl** on your `PATH`,
-then a one-time download of a pinned static build (SHA-256 verified) into that cache.
-You can override the data or cache root with `KULALA_CORE_DATA_DIR` / `KULALA_CORE_CACHE_DIR`.
-
-- **Published library** (`dist/`): the npm build sets `__KULALA_EMBED_CURL__=false`, so the package does **not** embed curl from the machine that ran `npm publish`.
-- **`bun build --compile`**: run `packages/core/scripts/generate-vendored-curl.ts` (optionally with `--target=bun-…` for cross-compiles) so the matching curl is present in the cache and embedded for that build, then compile with `--define __KULALA_EMBED_CURL__=true` and `--compile-autoload-package-json` (needed so request scripts can `require()` packages from the project's `node_modules`).
-
-[examples]: ./examples
-[http-example-files]: ./http-example-files
+Used by `kulala.nvim` via `download_url = "https://github.com/LoNebula/kulala-core/releases/download/%s/%s"`.
